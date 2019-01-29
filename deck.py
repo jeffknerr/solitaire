@@ -1,19 +1,28 @@
 """
 deck of cards class
 
+Default order is Ace234...TenJackQueenKing of Clubs, then 
+Diamonds, Hearts, Spades, and two Jokers (Big, then Little).
+
+Can optionally specify an order to the deck (full or partial):
+  mydeck = Deck("5DAS3SKHTSAHQC")
+The above would make a deck with the following order:
+  5 of Diamonds, Ace of Spades, 3 of Spades, King of Hearts, etc
+
 J. Knerr
 Fall 2016
 """
 
 from card import *
 from random import shuffle
+from collections import deque
 
 class Deck(object):
   """deck of 52 playing cards plus 2 jokers"""
 
   def __init__(self, order=""):
-    """create all 52 cards"""
-    self.cards = []
+    """create all 54 cards (use specified order if given)"""
+    self.cards = deque()
     if order == "":
       for suit in "CDHS":
         for rank in "A23456789TJQK":
@@ -47,6 +56,10 @@ class Deck(object):
         s = s + "\n"
     return s
 
+  def __getitem__(self, index):
+    """support indexing of the deck of cards"""
+    return self.cards[index]
+
   def getOrder(self):
     """return one long string to show current order of cards"""
     s = ""
@@ -62,27 +75,33 @@ class Deck(object):
 
   def dealCard(self):
     """deal one card from the deck"""
-    card = self.cards.pop(0)              # should use deque???
-    return card
+    if len(self.cards) > 0:
+      card = self.cards.popleft() 
+      return card
+    else:
+      raise Exception("Tried to deal from empty deck...")
 
   def isEmpty(self):
     """return True if deck is empty"""
     return len(self.cards) == 0
 
-if __name__ == "__main__":
+# ---------------------------------------------- #
 
+def main():
+  """some simple examples"""
   d = Deck()
+  print("full initial deck:")
+  print(d)
   assert(d.isEmpty() == False)
   assert(len(d) == 54)
-  print(d)
-  print(d.getOrder())
-  d.shuffle()
-  print(d.getOrder())
-  while not d.isEmpty():
-    print(d.dealCard())
-  assert(d.isEmpty() == True)
-  assert(len(d) == 0)
-  print("-"*30)
-  newdeck = Deck("AS2HJCTS3C6D9C7CACAH")
-  while not newdeck.isEmpty():
-    print(newdeck.dealCard())
+  print("top card dealt:")
+  topcard = d.dealCard()
+  print(topcard)
+  assert(len(d) == 53)
+  order = "AS2HJCTS3C6D9C7CACAH"
+  print("partial deck with specified order: %s" % order)
+  newdeck = Deck(order)
+  print(newdeck)
+
+if __name__ == "__main__":
+  main()

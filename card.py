@@ -20,7 +20,7 @@ class Card(object):
           raise Exception("Joker rank (%s) must be Big (B) or Little (L)..." % (rank))
       else:
         if (rank=="B") or (rank=="L"):
-          raise Exception("Non-joker rank (%s) must be A123..TJQK." % (rank))
+          raise Exception("Non-joker rank (%s) must be A23..TJQK." % (rank))
       self.rank = rank
       self.suit = suit
     else:
@@ -29,6 +29,17 @@ class Card(object):
   def __str__(self):
     """return string representation of playing card"""
     return self.rank+self.suit
+
+  def __repr__(self):
+    return "%s(%s,%s)" % (self.__class__.__name__, self.rank, self.suit)
+
+  def __hash__(self):
+    """to help with comparing cards"""
+    return hash((self.rank, self.suit))
+
+  def __eq__(self, other):
+    """to allow comparing cards to see if equal"""
+    return hash(self) == hash(other)
 
   def getRank(self):
     """getter for card rank"""
@@ -40,12 +51,14 @@ class Card(object):
 
 # ---------------------------------------- #
 
+from random import choice
+
 def main():
+  print("random cards, Ace through King:")
+  suits = list("CDHS")
   for rank in "A23456789TJQK":
-    c = Card(rank,"D")  
+    c = Card(rank,choice(suits))  
     print(c)
-  c = Card("5","J")
 
 if __name__ == "__main__":
   main()
-
