@@ -54,7 +54,7 @@ class Card(object):
 from random import choice
 
 def main():
-  print("random cards, Ace through King:")
+  print("random suits, Ace through King:")
   suits = list("CDHS")
   for rank in "A23456789TJQK":
     c = Card(rank,choice(suits))  

@@ -85,6 +85,31 @@ class Deck(object):
     """return True if deck is empty"""
     return len(self.cards) == 0
 
+  def getIndex(self, cardstr):
+    """
+    given a card string, such as "AS", or "3C", return it's 
+    index in the deck (0=first, 1=second,...)
+    """
+    rank=cardstr[0].upper()
+    suit=cardstr[1].upper()
+    for i in range(len(self.cards)):
+      c = self.cards[i]
+      if c.getRank()==rank and c.getSuit()==suit:
+        return i
+    raise Exception("Card (%s) not found in deck..." % cardstr)
+
+  def moveDown1(self, i):
+    """
+    move the card at index i down by 1.
+    however, if card is last, don't swap with first. move it to second spot.
+    """
+    if i == len(self.cards)-1:
+      # insert into position 1
+      lastcard = self.cards.pop()
+      self.cards.insert(1,lastcard)
+    else:
+      self.cards[i],self.cards[i+1] = self.cards[i+1],self.cards[i]
+
 # ---------------------------------------------- #
 
 def main():
@@ -102,6 +127,10 @@ def main():
   print("partial deck with specified order: %s" % order)
   newdeck = Deck(order)
   print(newdeck)
+  for i in range(20):
+    index = newdeck.getIndex("6D")
+    newdeck.moveDown1(index)
+    print(newdeck)
 
 if __name__ == "__main__":
   main()

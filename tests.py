@@ -81,5 +81,23 @@ class TestCards(unittest.TestCase):
     for i in range(len(self.cards)):
        self.assertEqual(self.cards[i], newdeck[i])
 
+  def test_movedown(self):
+    """test the moveDown1 method"""
+    cstr = "6D"
+    for i in range(55):
+      index = self.cards.getIndex(cstr)
+      if index == len(self.cards) - 1:
+        newindex = 1
+        beforecard = self.cards[0]
+      else:
+        newindex = index + 1
+        beforecard = self.cards[index+1]
+      self.cards.moveDown1(index)
+      self.assertEqual(self.cards[newindex].getRank(), cstr[0])
+      self.assertEqual(self.cards[newindex].getSuit(), cstr[1])
+      self.assertEqual(self.cards[newindex-1].getRank(), beforecard.getRank())
+      self.assertEqual(self.cards[newindex-1].getSuit(), beforecard.getSuit())
+
+
 if __name__ == '__main__':
   unittest.main()
