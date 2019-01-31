@@ -108,5 +108,44 @@ class TestCards(unittest.TestCase):
     onejokers = Deck("ASAHBJADAC")
     self.assertRaises(Exception, onejokers.findJokers)
 
+  def test_triplecut(self):
+    """test the tripleCut method"""
+    listorder = ["AS","BJ","AC","LJ","AD"]
+    order = "".join(listorder)
+    mydeck = Deck(order)
+    first, second = mydeck.findJokers()
+    mydeck.tripleCut(first, second)
+    self.assertEqual(mydeck.getOrder(), "ADBJACLJAS")
+    listorder = ["BJ","AC","LJ","AD"]
+    order = "".join(listorder)
+    mydeck = Deck(order)
+    first, second = mydeck.findJokers()
+    mydeck.tripleCut(first, second)
+    self.assertEqual(mydeck.getOrder(), "ADBJACLJ")
+    listorder = ["AS","BJ","LJ","AD"]
+    order = "".join(listorder)
+    mydeck = Deck(order)
+    first, second = mydeck.findJokers()
+    mydeck.tripleCut(first, second)
+    self.assertEqual(mydeck.getOrder(), "ADBJLJAS")
+    listorder = ["AS","BJ","AC","LJ"]
+    order = "".join(listorder)
+    mydeck = Deck(order)
+    first, second = mydeck.findJokers()
+    mydeck.tripleCut(first, second)
+    self.assertEqual(mydeck.getOrder(), "BJACLJAS")
+    listorder = ["AS","LJ","AC","BJ","AD"]
+    order = "".join(listorder)
+    mydeck = Deck(order)
+    first, second = mydeck.findJokers()
+    mydeck.tripleCut(first, second)
+    self.assertEqual(mydeck.getOrder(), "ADLJACBJAS")
+    listorder = ["2S","3S","4S","AS","LJ","AC","BJ","AD"]
+    order = "".join(listorder)
+    mydeck = Deck(order)
+    first, second = mydeck.findJokers()
+    mydeck.tripleCut(first, second)
+    self.assertEqual(mydeck.getOrder(), "ADLJACBJ2S3S4SAS")
+
 if __name__ == '__main__':
   unittest.main()

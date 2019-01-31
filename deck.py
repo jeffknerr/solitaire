@@ -15,14 +15,13 @@ Fall 2016
 
 from card import *
 from random import shuffle
-from collections import deque
 
 class Deck(object):
   """deck of 52 playing cards plus 2 jokers"""
 
   def __init__(self, order=""):
     """create all 54 cards (use specified order if given)"""
-    self.cards = deque()
+    self.cards = []
     if order == "":
       for suit in "CDHS":
         for rank in "A23456789TJQK":
@@ -39,6 +38,7 @@ class Deck(object):
         suit = order[i+1]
         c = Card(rank,suit)
         self.cards.append(c)
+      # should we make sure no repeated cards????
 
   def __len__(self): 
     return len(self.cards)
@@ -76,7 +76,7 @@ class Deck(object):
   def dealCard(self):
     """deal one card from the deck"""
     if len(self.cards) > 0:
-      card = self.cards.popleft() 
+      card = self.cards.pop(0) 
       return card
     else:
       raise Exception("Tried to deal from empty deck...")
@@ -130,6 +130,18 @@ class Deck(object):
       raise Exception("There aren't two jokers in this deck...")
     return first, second
 
+  def tripleCut(self, first, second):
+    """
+    triple cut the deck at the first and second indecies.
+    everything before first swaps with everything after second.
+    if deck is 26JKfirstQKAsecond58T3 before the triple cut, 
+    it should be 58T3firstQKAsecond26JK after.
+    """
+    before = self.cards[0:first]
+    after = self.cards[second+1:]
+    middle = self.cards[first:second+1]
+    self.cards = after + middle + before
+
 # ---------------------------------------------- #
 
 def main():
@@ -139,14 +151,23 @@ def main():
   print(d)
   assert(d.isEmpty() == False)
   assert(len(d) == 54)
+  print("-"*20)
   print("top card dealt:")
   topcard = d.dealCard()
   print(topcard)
   assert(len(d) == 53)
+  print("-"*20)
   order = "AS2HJCTS3C6D9C7CACAH"
   print("partial deck with specified order: %s" % order)
   newdeck = Deck(order)
   print(newdeck)
+  print("-"*20)
+  order = "QSTS3SBJ3C6C8CLJKD8D9D4DTD"
+  mydeck = Deck(order)
+  print(mydeck)
+  first, second = mydeck.findJokers()
+  mydeck.tripleCut(first,second)
+  print(mydeck)
 
 if __name__ == "__main__":
   main()
