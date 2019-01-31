@@ -185,7 +185,17 @@ class Deck(object):
     # assumes we have a full deck??
     rank = c.getRank()
     suit = c.getSuit()
+    # what about the jokers???
     return self.lookup[rank] + self.lookup[suit]
+
+  def outputCard(self):
+    """
+    get card number of top card, count down that many from top, 
+    output the card. So if top card is 5C, count down 5 from the top
+    (first card is 1), then output the next card.
+    """
+    topnum = self._getCardNum(self.cards[0])
+    return self.cards[topnum]
 
 # ---------------------------------------------- #
 

@@ -164,5 +164,15 @@ class TestCards(unittest.TestCase):
       self.assertEqual(order[:2*index], neworder[2*(53-index):2*53])  # old first = new second
       self.assertEqual(order[2*index:2*53], neworder[:2*(53-index)])  # old second = new first
 
+  def test_outputcard(self):
+    """test the outputCard method"""
+    for i in range(30):
+      self.cards.shuffle()
+      top = self.cards[0]
+      if top.getSuit() != "J":    # don't test for jokers
+        outcard = self.cards.outputCard()
+        count = self.cards._getCardNum(top)
+        self.assertEqual(self.cards[count], outcard)
+
 if __name__ == '__main__':
   unittest.main()
