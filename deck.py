@@ -39,6 +39,25 @@ class Deck(object):
         c = Card(rank,suit)
         self.cards.append(c)
       # should we make sure no repeated cards????
+    self.lookup = {
+        "A": 1,
+        "2": 2,
+        "3": 3,
+        "4": 4,
+        "5": 5,
+        "6": 6,
+        "7": 7,
+        "8": 8,
+        "9": 9,
+        "T": 10,
+        "J": 11,
+        "Q": 12,
+        "K": 13,
+        "C": 0,      # clubs
+        "D": 13,     # diamonds
+        "H": 26,     # hearts
+        "S": 39      # spades
+        }
 
   def __len__(self): 
     return len(self.cards)
@@ -137,15 +156,42 @@ class Deck(object):
     if deck is 26JKfirstQKAsecond58T3 before the triple cut, 
     it should be 58T3firstQKAsecond26JK after.
     """
-    before = self.cards[0:first]
+    before = self.cards[:first]
     after = self.cards[second+1:]
     middle = self.cards[first:second+1]
     self.cards = after + middle + before
+
+  def countCut(self):
+    """
+    count cut the deck: find *number* of last card, count down that
+    many from the top, swap top cut with rest of the deck, leaving the
+    last card as is. For example, suppose last card is 5 of Clubs:
+    before: 2864JQT9....K5  so count down 5 from top (2864J) and cut
+     after: QT9....K2864J5  but leave 5 of Clubs last. 
+    If last card is 5D, would count down 5+13
+    If last card is 5H, would count down 5+26
+    If last card is 5S, would count down 5+39
+    If last card is a joker, do nothing.
+    """
+    last = self.cards[len(self.cards) - 1]
+    if last.getSuit() != "J":
+      count = self._getCardNum(last)
+      before = self.cards[:count]
+      after = self.cards[count:len(self.cards)-1]
+      self.cards = after + before + [last]
+
+  def _getCardNum(self, c):
+    """given a card, return it's number using bridge order: CDHS"""
+    # assumes we have a full deck??
+    rank = c.getRank()
+    suit = c.getSuit()
+    return self.lookup[rank] + self.lookup[suit]
 
 # ---------------------------------------------- #
 
 def main():
   """some simple examples"""
+  print("-"*20)
   d = Deck()
   print("full initial deck:")
   print(d)
@@ -162,12 +208,6 @@ def main():
   newdeck = Deck(order)
   print(newdeck)
   print("-"*20)
-  order = "QSTS3SBJ3C6C8CLJKD8D9D4DTD"
-  mydeck = Deck(order)
-  print(mydeck)
-  first, second = mydeck.findJokers()
-  mydeck.tripleCut(first,second)
-  print(mydeck)
 
 if __name__ == "__main__":
   main()

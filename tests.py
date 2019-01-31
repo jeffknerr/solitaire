@@ -147,5 +147,22 @@ class TestCards(unittest.TestCase):
     mydeck.tripleCut(first, second)
     self.assertEqual(mydeck.getOrder(), "ADLJACBJ2S3S4SAS")
 
+  def test_countcut(self):
+    """test the countCut method"""
+    # joker on bottom means do nothing
+    order = self.cards.getOrder()
+    self.cards.countCut()
+    self.assertEqual(self.cards.getOrder(), order)
+    for i in range(10):
+      while self.cards[-1].getSuit() == "J":
+        self.cards.shuffle()
+      order = self.cards.getOrder()
+      lastcard = self.cards[-1]
+      index = self.cards._getCardNum(lastcard)
+      self.cards.countCut()
+      neworder = self.cards.getOrder()
+      self.assertEqual(order[:2*index], neworder[2*(53-index):2*53])  # old first = new second
+      self.assertEqual(order[2*index:2*53], neworder[:2*(53-index)])  # old second = new first
+
 if __name__ == '__main__':
   unittest.main()
