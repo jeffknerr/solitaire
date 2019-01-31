@@ -110,6 +110,26 @@ class Deck(object):
     else:
       self.cards[i],self.cards[i+1] = self.cards[i+1],self.cards[i]
 
+  def findJokers(self):
+    """
+    find the jokers in the deck, return index of each. 
+    Doesn't matter which joker is which, just return index of 
+    first joker found and index of second joker found
+    """
+    first = None
+    second = None
+    for i in range(len(self.cards)):
+      rank = self.cards[i].getRank()
+      suit = self.cards[i].getSuit()
+      if suit=="J":
+        if first==None:
+          first = i
+        else:
+          second = i
+    if first==None or second==None:
+      raise Exception("There aren't two jokers in this deck...")
+    return first, second
+
 # ---------------------------------------------- #
 
 def main():
@@ -127,10 +147,6 @@ def main():
   print("partial deck with specified order: %s" % order)
   newdeck = Deck(order)
   print(newdeck)
-  for i in range(20):
-    index = newdeck.getIndex("6D")
-    newdeck.moveDown1(index)
-    print(newdeck)
 
 if __name__ == "__main__":
   main()

@@ -98,6 +98,15 @@ class TestCards(unittest.TestCase):
       self.assertEqual(self.cards[newindex-1].getRank(), beforecard.getRank())
       self.assertEqual(self.cards[newindex-1].getSuit(), beforecard.getSuit())
 
+  def test_findjokers(self):
+    """test the findJokers method"""
+    first, second = self.cards.findJokers()
+    self.assertEqual(first,52)
+    self.assertEqual(second,53)
+    nojokers = Deck("ASAHADAC")
+    self.assertRaises(Exception, nojokers.findJokers)
+    onejokers = Deck("ASAHBJADAC")
+    self.assertRaises(Exception, onejokers.findJokers)
 
 if __name__ == '__main__':
   unittest.main()
