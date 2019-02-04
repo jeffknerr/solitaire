@@ -14,6 +14,8 @@ from card import *
 from deck import *
 import click
 
+# ------------------------------------------------- #
+
 @click.command()
 @click.option('-m','--msgfile',
               default='', 
@@ -28,9 +30,9 @@ import click
 def main(msgfile,encrypt,outfile,keyfile):
   """get message, deck of cards, encrypt/decrypt message"""
   if msgfile=='':
-    msg = input("msg: ")
+    msg = clean(input("msg: "))
   else:
-    msg = readFile(msgfile)
+    msg = clean(readFile(msgfile))
   deckofcards = readCards(keyfile)
   nletters = len(msg)
   keystream = generateKeystream(deckofcards,nletters)
@@ -42,6 +44,8 @@ def main(msgfile,encrypt,outfile,keyfile):
     difference = subtract(cipherkeystream, ciphertext)
   output(difference, outfile)
 
+# ------------------------------------------------- #
+
 def output(difference, outfile):
   """convert difference back to letters, send to outfile/stdout"""
   if outfile=='':
@@ -52,15 +56,43 @@ def output(difference, outfile):
     ofile.close()
 
 def readFile(fn):
-  """read message from given filename, clean up and return"""
-  orig = "do not use pc"
-  cleaned = "DONOTUSEPC"
+  """read and return message from given filename"""
+  while True:
+    try:
+      inf = open(fn, "r")
+      break
+    except FileNotFoundError:
+      print("Message file (%s) not found." % (fn))
+      fn = input("msgfile: ")
+  orig = inf.readlines()
+  inf.close()
+  return "".join(orig)
+
+def clean(orig):
+  """given a string, clean it up (only uppercase letters)"""
+  cleaned = ""
+  for line in orig:
+    for ch in line:
+      if ch.isalpha():
+        cleaned += ch.upper()
   return cleaned
 
 def readCards(fn):
   """read deck of cards order from given filename, return deck"""
-  order = "ASACAD..."
-  d = Deck()
+  while True:
+    try:
+      inf = open(fn, "r")
+      break
+    except FileNotFoundError:
+      print("Keyfile (%s) not found." % (fn))
+      fn = input("keyfile: ")
+  order = inf.readline().strip()
+  # skip the commented out lines and just grab first non-comment
+  while order[0] == "#":
+    order = inf.readline().strip()
+  if len(order) != 54*2:
+    raise Exception("keyfile not a valid deck of cards...")
+  d = Deck(order)
   return d
 
 def generateKeystream(d,n):
