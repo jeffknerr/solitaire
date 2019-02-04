@@ -31,20 +31,49 @@ def main(msgfile,encrypt,outfile,keyfile):
     msg = input("msg: ")
   else:
     msg = readFile(msgfile)
-  print(msg)
+  deckofcards = readCards(keyfile)
+  nletters = len(msg)
+  keystream = generateKeystream(deckofcards,nletters)
+  ciphertext= letters2numbers(msg)
+  cipherkeystream= letters2numbers(keystream)
   if encrypt:
-    print("enscrypting...")
+    difference = subtract(ciphertext, cipherkeystream)
   else:
-    print("decrypting...")
+    difference = subtract(cipherkeystream, ciphertext)
+  output(difference, outfile)
+
+def output(difference, outfile):
+  """convert difference back to letters, send to outfile/stdout"""
   if outfile=='':
-    print("writing to stdout...")
+    print(difference)
   else:
-    print("writing to %s..." % (outfile))
-  print("reading key from %s..." % (keyfile))
+    ofile = open(outfile, "w")
+    ofile.write(difference + "\n")
+    ofile.close()
 
 def readFile(fn):
-  """read message from given filename"""
-  return "do not use pc"
+  """read message from given filename, clean up and return"""
+  orig = "do not use pc"
+  cleaned = "DONOTUSEPC"
+  return cleaned
+
+def readCards(fn):
+  """read deck of cards order from given filename, return deck"""
+  order = "ASACAD..."
+  d = Deck()
+  return d
+
+def generateKeystream(d,n):
+  """given deck of cards and number of letters, generate the keystream"""
+  return "KDWUPONOWT"
+
+def letters2numbers(s):
+  """given a string of letters, convert to numbers 1 to 26"""
+  return [15,19,11,10,10]
+
+def subtract(str1, str2):
+  """given two strings, return str1-str2 modulo 26"""
+  return [4,15,14,15,20]
 
 # --------------------------------------- #
 
