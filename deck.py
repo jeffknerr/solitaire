@@ -197,6 +197,29 @@ class Deck(object):
     topnum = self._getCardNum(self.cards[0])
     return self.cards[topnum]
 
+  def _valid(self):
+    """return True if deck has all 54 cards and no repeats"""
+    if len(self.cards) < 54:
+      return False
+    dcp = list(self.cards)  # deck copy
+    dcp.sort()              # should now be sorted
+    ranks = list("A23456789TJQK")
+    suits = list("CDHS")
+    i = 0
+    for s in suits:
+      for r in ranks:
+        c = dcp[i]
+        if c.getRank()!=r or c.getSuit()!=s:
+          return False
+        i += 1
+    if dcp[i].getRank()!="B" or dcp[i].getSuit()!= "J":
+      return False
+    i += 1
+    if dcp[i].getRank()!="L" or dcp[i].getSuit()!= "J":
+      return False
+    # if we get here...all OK
+    return True
+
 # ---------------------------------------------- #
 
 def main():

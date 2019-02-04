@@ -49,6 +49,50 @@ class Card(object):
     """getter for card suit"""
     return self.suit
 
+  def __lt__(self, oc):
+    """allow comparing cards...all clubs, then D, H, S, Jokers"""
+    ranks = list("A23456789TJQKBL")
+    suits = list("CDHSJ")
+    if self.suit == oc.suit:
+      return ranks.index(self.rank) < ranks.index(oc.rank)
+    else:
+      return suits.index(self.suit) < suits.index(oc.suit)
+
+  def __gt__(self, oc):
+    """allow comparing cards...all clubs, then D, H, S, Jokers"""
+    ranks = list("A23456789TJQKBL")
+    suits = list("CDHSJ")
+    if self.suit == oc.suit:
+      return ranks.index(self.rank) > ranks.index(oc.rank)
+    else:
+      return suits.index(self.suit) > suits.index(oc.suit)
+
+  def __le__(self, oc):
+    """allow comparing cards...all clubs, then D, H, S, Jokers"""
+    ranks = list("A23456789TJQKBL")
+    suits = list("CDHSJ")
+    if self.suit == oc.suit:
+      return ranks.index(self.rank) <= ranks.index(oc.rank)
+    else:
+      return suits.index(self.suit) <= suits.index(oc.suit)
+
+  def __gt__(self, oc):
+    """allow comparing cards...all clubs, then D, H, S, Jokers"""
+    ranks = list("A23456789TJQKBL")
+    suits = list("CDHSJ")
+    if self.suit == oc.suit:
+      return ranks.index(self.rank) >= ranks.index(oc.rank)
+    else:
+      return suits.index(self.suit) >= suits.index(oc.suit)
+
+  def __eq__(self, oc):
+    """allow comparing cards...all clubs, then D, H, S, Jokers"""
+    return self.suit == oc.suit and self.rank == oc.rank
+
+  def __ne__(self, oc):
+    """allow comparing cards...all clubs, then D, H, S, Jokers"""
+    return self.suit != oc.suit or self.rank != oc.rank
+
 # ---------------------------------------- #
 
 from random import choice
