@@ -28,7 +28,7 @@ import click
 @click.option('-k','--keyfile',required=True, type=str,
               help="keyfile containing initial deck of cards order")
 def main(msgfile,encrypt,outfile,keyfile):
-  """get message, deck of cards, encrypt/decrypt message"""
+  """get message, get deck of cards, then encrypt/decrypt the message"""
   if msgfile=='':
     msg = clean(input("msg: "))
   else:
@@ -39,20 +39,26 @@ def main(msgfile,encrypt,outfile,keyfile):
   ciphertext= letters2numbers(msg)
   cipherkeystream= letters2numbers(keystream)
   if encrypt:
-    difference = subtract(ciphertext, cipherkeystream)
+    # add them
+    result = [(ciphertext[i]+cipherkeystream[i])%26 for i in range(len(ciphertext))]
   else:
-    difference = subtract(cipherkeystream, ciphertext)
-  output(difference, outfile)
+    # subtract them
+    result = [(ciphertext[i]-cipherkeystream[i])%26 for i in range(len(ciphertext))]
+  output(result, outfile)
 
 # ------------------------------------------------- #
 
-def output(difference, outfile):
-  """convert difference back to letters, send to outfile/stdout"""
+def output(result, outfile):
+  """convert result back to letters, send to outfile/stdout"""
+  letters = []
+  for ch in result:
+    letters.append(chr(ch+ord("A")))
+  outstr = "".join(letters)
   if outfile=='':
-    print(difference)
+    print(outstr)
   else:
     ofile = open(outfile, "w")
-    ofile.write(difference + "\n")
+    ofile.write(outstr + "\n")
     ofile.close()
 
 def readFile(fn):
@@ -96,16 +102,39 @@ def readCards(fn):
   return d
 
 def generateKeystream(d,n):
-  """given deck of cards and number of letters, generate the keystream"""
-  return "KDWUPONOWT"
+  """
+  given deck of cards and number of letters (n), generate 
+  n keystream letters, return as a string
+  """
+  kstrm = []
+  i = 0
+  while i < n:
+    index = d.getIndex("LJ")                # find the little joker
+    d.moveDown1(index)                      # move it down one
+    index = d.getIndex("BJ")                # find big joker
+    d.moveDown1(index)                      # move it down 
+    d.moveDown1(index)                      #              two
+    first,second = d.findJokers()           # find location of jokers 
+    d.tripleCut(first, second)              # triple cut on those locations
+    d.countCut()                            # now do the count cut
+    outputcard = d.outputCard()             # find the output card
+    if outputcard != None:                  # go back to step 1 if it's a joker
+      rn = outputcard.rankNum()             # convert it to 1-26, where
+      sn = outputcard.suitNum()             # Clubs are 1-13, Diamonds 14-26
+      if sn > 1:                            # Hearts 1-13, Spades 14-26
+        sn -= 2                             # AC=1, AD=14, AH=1, AS=14
+      letter = chr(ord('A') + rn-1+(sn*13))
+      kstrm.append(letter)
+      i += 1
+  return "".join(kstrm)
 
 def letters2numbers(s):
-  """given a string of letters, convert to numbers 1 to 26"""
-  return [15,19,11,10,10]
-
-def subtract(str1, str2):
-  """given two strings, return str1-str2 modulo 26"""
-  return [4,15,14,15,20]
+  """given a string of letters, convert to numbers 0 to 25"""
+  nums = []
+  for ch in s:
+    num = ord(ch) - ord("A")
+    nums.append(num)
+  return nums
 
 # --------------------------------------- #
 

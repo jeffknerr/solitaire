@@ -38,26 +38,6 @@ class Deck(object):
         suit = order[i+1]
         c = Card(rank,suit)
         self.cards.append(c)
-      # should we make sure no repeated cards????
-    self.lookup = {
-        "A": 1,
-        "2": 2,
-        "3": 3,
-        "4": 4,
-        "5": 5,
-        "6": 6,
-        "7": 7,
-        "8": 8,
-        "9": 9,
-        "T": 10,
-        "J": 11,
-        "Q": 12,
-        "K": 13,
-        "C": 0,      # clubs
-        "D": 13,     # diamonds
-        "H": 26,     # hearts
-        "S": 39      # spades
-        }
 
   def __len__(self): 
     return len(self.cards)
@@ -175,18 +155,12 @@ class Deck(object):
     """
     last = self.cards[len(self.cards) - 1]
     if last.getSuit() != "J":
-      count = self._getCardNum(last)
+      suits = list("CDHS")
+      suitnum = suits.index(last.getSuit())
+      count = last.rankNum() + (suitnum*13)
       before = self.cards[:count]
       after = self.cards[count:len(self.cards)-1]
       self.cards = after + before + [last]
-
-  def _getCardNum(self, c):
-    """given a card, return it's number using bridge order: CDHS"""
-    # assumes we have a full deck??
-    rank = c.getRank()
-    suit = c.getSuit()
-    # what about the jokers???
-    return self.lookup[rank] + self.lookup[suit]
 
   def outputCard(self):
     """
@@ -194,7 +168,11 @@ class Deck(object):
     output the card. So if top card is 5C, count down 5 from the top
     (first card is 1), then output the next card.
     """
-    topnum = self._getCardNum(self.cards[0])
+    topcard = self.cards[0]
+    suit = topcard.getSuit()
+    if suit == "J":
+      return None
+    topnum = topcard.rankNum() + (topcard.suitNum()*13)
     return self.cards[topnum]
 
   def _valid(self):

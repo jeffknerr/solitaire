@@ -49,6 +49,22 @@ class Card(object):
     """getter for card suit"""
     return self.suit
 
+  def rankNum(self):
+    """convert card rank to number 1-13 (A->K)"""
+    ranks = list("A23456789TJQK")
+    if self.rank in ranks:
+      number = ranks.index(self.rank) + 1
+      return number
+    raise Exception("Card rank (%s) not valid (1-13)..." % self.rank)
+
+  def suitNum(self):
+    """convert card suit to number: C=0,D=1,H=2,S=3"""
+    suits = list("CDHS")
+    if self.suit in suits:
+      number = suits.index(self.suit)
+      return number
+    raise Exception("Card suit (%s) not valid (CDHS)..." % self.suit)
+
   def __lt__(self, oc):
     """allow comparing cards...all clubs, then D, H, S, Jokers"""
     ranks = list("A23456789TJQKBL")
@@ -91,6 +107,8 @@ class Card(object):
 
   def __ne__(self, oc):
     """allow comparing cards...all clubs, then D, H, S, Jokers"""
+    if oc == None:
+      return True
     return self.suit != oc.suit or self.rank != oc.rank
 
 # ---------------------------------------- #

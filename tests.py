@@ -167,7 +167,7 @@ class TestCards(unittest.TestCase):
         self.doc.shuffle()
       order = self.doc.getOrder()
       lastcard = self.doc[-1]
-      index = self.doc._getCardNum(lastcard)
+      index = lastcard.rankNum() + lastcard.suitNum()*13
       self.doc.countCut()
       neworder = self.doc.getOrder()
       self.assertEqual(order[:2*index], neworder[2*(53-index):2*53])  # old first = new second
@@ -181,7 +181,7 @@ class TestCards(unittest.TestCase):
       top = self.doc[0]
       if top.getSuit() != "J":    # don't test for jokers
         outcard = self.doc.outputCard()
-        count = self.doc._getCardNum(top)
+        count = top.rankNum() + top.suitNum()*13
         self.assertEqual(self.doc[count], outcard)
       self.assertTrue(self.doc._valid())
 
