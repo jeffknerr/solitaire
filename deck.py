@@ -27,10 +27,10 @@ class Deck(object):
         for rank in "A23456789TJQK":
           c = Card(rank,suit)
           self.cards.append(c)
-      bigjoker = Card("B","J")
       littlejoker = Card("L","J")
-      self.cards.append(bigjoker)
       self.cards.append(littlejoker)
+      bigjoker = Card("B","J")
+      self.cards.append(bigjoker)
     else:
       # use given order to set the deck
       for i in range(0,len(order),2):
@@ -171,9 +171,15 @@ class Deck(object):
     topcard = self.cards[0]
     suit = topcard.getSuit()
     if suit == "J":
-      return None
-    topnum = topcard.rankNum() + (topcard.suitNum()*13)
-    return self.cards[topnum]
+      topnum = 53     # either joker is 53
+    else:
+      topnum = topcard.rankNum() + (topcard.suitNum()*13)
+    outcard = self.cards[topnum]
+    suit = outcard.getSuit()
+    if suit == "J":
+      return None     # how we tell if should start over
+    else:
+      return outcard
 
   def _valid(self):
     """return True if deck has all 54 cards and no repeats"""

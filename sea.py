@@ -118,6 +118,7 @@ def generateKeystream(d,n):
     d.tripleCut(first, second)              # triple cut on those locations
     d.countCut()                            # now do the count cut
     outputcard = d.outputCard()             # find the output card
+    print(outputcard)
     if outputcard != None:                  # go back to step 1 if it's a joker
       rn = outputcard.rankNum()             # convert it to 1-26, where
       sn = outputcard.suitNum()             # Clubs are 1-13, Diamonds 14-26
