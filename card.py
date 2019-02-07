@@ -103,6 +103,8 @@ class Card(object):
 
   def __eq__(self, oc):
     """allow comparing cards...all clubs, then D, H, S, Jokers"""
+    if oc == None:
+      return False
     return self.suit == oc.suit and self.rank == oc.rank
 
   def __ne__(self, oc):

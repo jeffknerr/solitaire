@@ -36,14 +36,14 @@ def main(msgfile,encrypt,outfile,keyfile):
   deckofcards = readCards(keyfile)
   nletters = len(msg)
   keystream = generateKeystream(deckofcards,nletters)
-  ciphertext= letters2numbers(msg)
-  cipherkeystream= letters2numbers(keystream)
+  msgnums = letters2numbers(msg)
+  kstnums = letters2numbers(keystream)
   if encrypt:
     # add them
-    result = [(ciphertext[i]+cipherkeystream[i])%26 for i in range(len(ciphertext))]
+    result = [(msgnums[i]+kstnums[i])%26 for i in range(len(msgnums))]
   else:
     # subtract them
-    result = [(ciphertext[i]-cipherkeystream[i])%26 for i in range(len(ciphertext))]
+    result = [(msgnums[i]-kstnums[i])%26 for i in range(len(msgnums))]
   output(result, outfile)
 
 # ------------------------------------------------- #
@@ -52,7 +52,7 @@ def output(result, outfile):
   """convert result back to letters, send to outfile/stdout"""
   letters = []
   for ch in result:
-    letters.append(chr(ch+ord("A")))
+    letters.append(chr(ch+ord("A")+1))
   outstr = "".join(letters)
   if outfile=='':
     print(outstr)
@@ -113,18 +113,17 @@ def generateKeystream(d,n):
     d.moveDown1(index)                      # move it down one
     index = d.getIndex("BJ")                # find big joker
     d.moveDown1(index)                      # move it down 
-    d.moveDown1(index)                      #              two
+    d.moveDown1(index+1)                    #              two
     first,second = d.findJokers()           # find location of jokers 
     d.tripleCut(first, second)              # triple cut on those locations
     d.countCut()                            # now do the count cut
     outputcard = d.outputCard()             # find the output card
-    print(outputcard)
     if outputcard != None:                  # go back to step 1 if it's a joker
       rn = outputcard.rankNum()             # convert it to 1-26, where
       sn = outputcard.suitNum()             # Clubs are 1-13, Diamonds 14-26
       if sn > 1:                            # Hearts 1-13, Spades 14-26
         sn -= 2                             # AC=1, AD=14, AH=1, AS=14
-      letter = chr(ord('A') + rn-1+(sn*13))
+      letter = chr(ord('A') + (rn-1)+(sn*13))
       kstrm.append(letter)
       i += 1
   return "".join(kstrm)
