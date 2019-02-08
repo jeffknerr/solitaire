@@ -15,6 +15,10 @@ from deck import *
 import click
 
 # ------------------------------------------------- #
+# Still TODO:
+#  - input: pad with X if not in groups of 5
+#  - output in groups of 5 letters
+#  - add more tests
 
 @click.command()
 @click.option('-m','--msgfile',
@@ -39,20 +43,36 @@ def main(msgfile,encrypt,outfile,keyfile):
   msgnums = letters2numbers(msg)
   kstnums = letters2numbers(keystream)
   if encrypt:
-    # add them
-    result = [(msgnums[i]+kstnums[i])%26 for i in range(len(msgnums))]
+    newnums = add(msgnums,kstnums)
   else:
-    # subtract them
-    result = [(msgnums[i]-kstnums[i])%26 for i in range(len(msgnums))]
-  output(result, outfile)
+    newnums = subtract(msgnums,kstnums)
+  output(newnums, outfile)
 
 # ------------------------------------------------- #
+# better way using % operator??? but nums need to be 1-26...
+def add(L1, L2):
+  """add two lists of integers (1-26), mod 26"""
+  newL = []
+  for i in range(len(L1)):
+    sum = L1[i] + L2[i]
+    if sum > 26: sum -= 26
+    newL.append(sum)
+  return newL
 
-def output(result, outfile):
-  """convert result back to letters, send to outfile/stdout"""
+def subtract(L1, L2):
+  """subtract (L1-L2) two lists of integers (1-26), mod 26"""
+  newL = []
+  for i in range(len(L1)):
+    diff = L1[i] + L2[i]
+    if diff < 1: diff += 26
+    newL.append(diff)
+  return newL
+
+def output(numlist, outfile):
+  """convert numlist back to letters, send to outfile/stdout"""
   letters = []
-  for ch in result:
-    letters.append(chr(ch+ord("A")+1))
+  for n in numlist:
+    letters.append(chr(n-1+ord("A")))
   outstr = "".join(letters)
   if outfile=='':
     print(outstr)
@@ -129,10 +149,10 @@ def generateKeystream(d,n):
   return "".join(kstrm)
 
 def letters2numbers(s):
-  """given a string of letters, convert to numbers 0 to 25"""
+  """given a string of uppercase letters, convert to numbers 1 to 26"""
   nums = []
   for ch in s:
-    num = ord(ch) - ord("A")
+    num = ord(ch) - ord("A") + 1
     nums.append(num)
   return nums
 

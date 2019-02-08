@@ -2,7 +2,7 @@
 deck of cards class
 
 Default order is Ace234...TenJackQueenKing of Clubs, then 
-Diamonds, Hearts, Spades, and two Jokers (Big, then Little).
+Diamonds, Hearts, Spades, and two Jokers (Little, then Big).
 
 Can optionally specify an order to the deck (full or partial):
   mydeck = Deck("5DAS3SKHTSAHQC")
@@ -10,7 +10,7 @@ The above would make a deck with the following order:
   5 of Diamonds, Ace of Spades, 3 of Spades, King of Hearts, etc
 
 J. Knerr
-Fall 2016
+Spring 2019
 """
 
 from card import *
@@ -33,6 +33,8 @@ class Deck(object):
       self.cards.append(bigjoker)
     else:
       # use given order to set the deck
+      if (len(order)%2) != 0: 
+        raise Exception("Order needs to be even: AS2S3S...")
       for i in range(0,len(order),2):
         rank = order[i]
         suit = order[i+1]
@@ -61,15 +63,15 @@ class Deck(object):
 
   def getOrder(self):
     """return one long string to show current order of cards"""
-    s = ""
+    s = []
     for card in self.cards:
       rank = card.getRank()
       suit = card.getSuit()
-      s = s + rank + suit 
-    return s
+      s.append(rank + suit)
+    return "".join(s)
 
   def shuffle(self):
-    """shuffle the deck"""
+    """shuffle the deck using random lib shuffle"""
     shuffle(self.cards) 
 
   def dealCard(self):
@@ -107,6 +109,7 @@ class Deck(object):
       lastcard = self.cards.pop()
       self.cards.insert(1,lastcard)
     else:
+      # just swap with next card
       self.cards[i],self.cards[i+1] = self.cards[i+1],self.cards[i]
 
   def findJokers(self):
@@ -146,18 +149,16 @@ class Deck(object):
     count cut the deck: find *number* of last card, count down that
     many from the top, swap top cut with rest of the deck, leaving the
     last card as is. For example, suppose last card is 5 of Clubs:
-    before: 2864JQT9....K5  so count down 5 from top (2864J) and cut
-     after: QT9....K2864J5  but leave 5 of Clubs last. 
+    before: 2864JQT9....K5  so count down 5 from top (2864J) and cut.
+     after: QT9....K2864J5  (leave 5 of Clubs last)
     If last card is 5D, would count down 5+13
     If last card is 5H, would count down 5+26
     If last card is 5S, would count down 5+39
     If last card is a joker, do nothing.
     """
     last = self.cards[len(self.cards) - 1]
-    if last.getSuit() != "J":
-      suits = list("CDHS")
-      suitnum = suits.index(last.getSuit())
-      count = last.rankNum() + (suitnum*13)
+    if last.getSuit() != "J":   # do nothing if joker
+      count = last.rankNum() + (last.suitNum()*13)
       before = self.cards[:count]
       after = self.cards[count:len(self.cards)-1]
       self.cards = after + before + [last]
@@ -177,7 +178,7 @@ class Deck(object):
     outcard = self.cards[topnum]
     suit = outcard.getSuit()
     if suit == "J":
-      return None     # how we tell if should start over
+      return None     # how we tell if should start over (ignore joker)
     else:
       return outcard
 

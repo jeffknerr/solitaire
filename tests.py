@@ -1,3 +1,5 @@
+#! /usr/bin/python3
+
 import unittest, io, sys
 from card import *
 from deck import *
@@ -179,15 +181,12 @@ class TestCards(unittest.TestCase):
     for i in range(30):
       self.doc.shuffle()
       top = self.doc[0]
-      if top.getSuit() != "J":  
+      if top.getSuit() == "J":  
         count = 53
       else:
         count = top.rankNum() + top.suitNum()*13
       outcard = self.doc.outputCard()
       if outcard != None:     # outputcard was joker...
-        print(count)
-        print(outcard)
-        print(self.doc.getOrder())
         self.assertEqual(self.doc[count], outcard)
       self.assertTrue(self.doc._valid())
 

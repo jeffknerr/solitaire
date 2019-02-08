@@ -1,8 +1,8 @@
 """
-playing card class
+playing card class: c = Card("A","C") for Ace of Clubs
 
 J. Knerr
-Fall 2016
+Spring 2019
 """
 
 class Card(object):
@@ -12,9 +12,9 @@ class Card(object):
     """create playing card, given rank and suit"""
     rank = rank.upper()
     suit = suit.upper()
-    ranks = list("A23456789TJQKBL")
-    suits = list("CDHSJ")
-    if (rank in ranks) and (suit in suits):
+    self.ranks = list("A23456789TJQKBL")
+    self.suits = list("CDHSJ")
+    if (rank in self.ranks) and (suit in self.suits):
       if suit=="J":
         if (rank!="B") and (rank!="L"):
           raise Exception("Joker rank (%s) must be Big (B) or Little (L)..." % (rank))
@@ -40,6 +40,10 @@ class Card(object):
   def __eq__(self, other):
     """to allow comparing cards to see if equal"""
     return hash(self) == hash(other)
+
+  def __ne__(self, other):
+    """allow comparing cards...see if != """
+    return hash(self) != hash(other)
 
   def getRank(self):
     """getter for card rank"""
@@ -67,51 +71,43 @@ class Card(object):
 
   def __lt__(self, oc):
     """allow comparing cards...all clubs, then D, H, S, Jokers"""
-    ranks = list("A23456789TJQKBL")
-    suits = list("CDHSJ")
-    if self.suit == oc.suit:
-      return ranks.index(self.rank) < ranks.index(oc.rank)
+    if isinstance(oc, Card):
+      if self.suit == oc.suit:
+        return self.ranks.index(self.rank) < self.ranks.index(oc.rank)
+      else:
+        return self.suits.index(self.suit) < self.suits.index(oc.suit)
     else:
-      return suits.index(self.suit) < suits.index(oc.suit)
+      raise Exception("Other card is not a card...")
 
   def __gt__(self, oc):
     """allow comparing cards...all clubs, then D, H, S, Jokers"""
-    ranks = list("A23456789TJQKBL")
-    suits = list("CDHSJ")
-    if self.suit == oc.suit:
-      return ranks.index(self.rank) > ranks.index(oc.rank)
+    if isinstance(oc, Card):
+      if self.suit == oc.suit:
+        return self.ranks.index(self.rank) > self.ranks.index(oc.rank)
+      else:
+        return self.suits.index(self.suit) > self.suits.index(oc.suit)
     else:
-      return suits.index(self.suit) > suits.index(oc.suit)
+      raise Exception("Other card is not a card...")
 
   def __le__(self, oc):
     """allow comparing cards...all clubs, then D, H, S, Jokers"""
-    ranks = list("A23456789TJQKBL")
-    suits = list("CDHSJ")
-    if self.suit == oc.suit:
-      return ranks.index(self.rank) <= ranks.index(oc.rank)
+    if isinstance(oc, Card):
+      if self.suit == oc.suit:
+        return self.ranks.index(self.rank) <= self.ranks.index(oc.rank)
+      else:
+        return self.suits.index(self.suit) <= self.suits.index(oc.suit)
     else:
-      return suits.index(self.suit) <= suits.index(oc.suit)
+      raise Exception("Other card is not a card...")
 
-  def __gt__(self, oc):
+  def __ge__(self, oc):
     """allow comparing cards...all clubs, then D, H, S, Jokers"""
-    ranks = list("A23456789TJQKBL")
-    suits = list("CDHSJ")
-    if self.suit == oc.suit:
-      return ranks.index(self.rank) >= ranks.index(oc.rank)
+    if isinstance(oc, Card):
+      if self.suit == oc.suit:
+        return self.ranks.index(self.rank) >= self.ranks.index(oc.rank)
+      else:
+        return self.suits.index(self.suit) >= self.suits.index(oc.suit)
     else:
-      return suits.index(self.suit) >= suits.index(oc.suit)
-
-  def __eq__(self, oc):
-    """allow comparing cards...all clubs, then D, H, S, Jokers"""
-    if oc == None:
-      return False
-    return self.suit == oc.suit and self.rank == oc.rank
-
-  def __ne__(self, oc):
-    """allow comparing cards...all clubs, then D, H, S, Jokers"""
-    if oc == None:
-      return True
-    return self.suit != oc.suit or self.rank != oc.rank
+      raise Exception("Other card is not a card...")
 
 # ---------------------------------------- #
 
@@ -123,6 +119,10 @@ def main():
   for rank in "A23456789TJQK":
     c = Card(rank,choice(suits))  
     print(c)
+  c1 = Card(choice("A23456"),choice("CDHS"))
+  c2 = Card(choice("A23456"),choice("CDHS"))
+  print("%s >= %s: %s" % (c1,c2,c1>=c2))
+  print("%s <= %s: %s" % (c1,c2,c1<=c2))
 
 if __name__ == "__main__":
   main()
