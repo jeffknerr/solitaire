@@ -5,6 +5,8 @@ from card import *
 from deck import *
 from random import randrange, choice, shuffle
 from operator import itemgetter
+from sea import *
+import subprocess
 
 class TestCards(unittest.TestCase):
 
@@ -189,6 +191,20 @@ class TestCards(unittest.TestCase):
       if outcard != None:     # outputcard was joker...
         self.assertEqual(self.doc[count], outcard)
       self.assertTrue(self.doc._valid())
+
+  def test_letters2numbers(self):
+    """test letters2numbers function"""
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    for i in range(len(alphabet)):
+      self.assertEqual(letters2numbers(alphabet[i]),[i+1])
+
+  def test_solitaire(self):
+    """test the whole thing..."""
+    command = "./sea.py -k testfiles/inorder -m testfiles/aaaaa"
+    result = "EXKYIZSGEH"
+    output = subprocess.run(command.split(), stdout=subprocess.PIPE)
+    self.assertEqual(output.stdout.decode('utf-8').strip(), result)
+    # add more tests!!!
 
 if __name__ == '__main__':
   unittest.main()
