@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 
-import unittest, io, sys
+import unittest, io, sys, os
 from card import *
 from deck import *
 from random import randrange, choice, shuffle
@@ -201,10 +201,39 @@ class TestCards(unittest.TestCase):
   def test_solitaire(self):
     """test the whole thing..."""
     command = "./sea.py -k datafiles/inorder -m datafiles/aaaaa"
-    result = "EXKYIZSGEH"
+    result = "EXKYI ZSGEH"
     output = subprocess.run(command.split(), stdout=subprocess.PIPE)
     self.assertEqual(output.stdout.decode('utf-8').strip(), result)
-    # add more tests!!!
+
+  def test_encryptdecrypt(self):
+    """make sure we get back original message"""
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    fn = "datafiles/randomstring"
+    for n in range(10):
+      length = randrange(10,100)
+      orig = ""
+      for i in range(length):
+        if i%5==0 and i>0:
+          orig += " "
+        orig+=choice(alphabet)
+      if length%5 != 0:
+        xs = (5-(length%5)) * "X"  # pad with X's
+        orig += xs
+      ofile = open(fn,"w")
+      ofile.write(orig+"\n")
+      ofile.close()
+      command = "./sea.py -k datafiles/keyfile -m %s" % fn
+      output = subprocess.run(command.split(), stdout=subprocess.PIPE)
+      encrypted = output.stdout.decode('utf-8').strip()
+      ofile = open(fn,"w")
+      ofile.write(encrypted+"\n")
+      ofile.close()
+      # now decrypt that and see if we get original back
+      command = "./sea.py -k datafiles/keyfile -m %s -d" % fn
+      output = subprocess.run(command.split(), stdout=subprocess.PIPE)
+      decrypted = output.stdout.decode('utf-8').strip()
+      self.assertEqual(orig,decrypted)
+    os.remove(fn)
 
 if __name__ == '__main__':
   unittest.main()

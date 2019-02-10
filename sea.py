@@ -61,7 +61,7 @@ def subtract(L1, L2):
   """subtract (L1-L2) two lists of integers (1-26), mod 26"""
   newL = []
   for i in range(len(L1)):
-    diff = L1[i] + L2[i]
+    diff = L1[i] - L2[i]
     if diff < 1: diff += 26
     newL.append(diff)
   return newL
