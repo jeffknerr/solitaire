@@ -200,7 +200,7 @@ class TestCards(unittest.TestCase):
 
   def test_solitaire(self):
     """test the whole thing..."""
-    command = "./sea.py -k testfiles/inorder -m testfiles/aaaaa"
+    command = "./sea.py -k datafiles/inorder -m datafiles/aaaaa"
     result = "EXKYIZSGEH"
     output = subprocess.run(command.split(), stdout=subprocess.PIPE)
     self.assertEqual(output.stdout.decode('utf-8').strip(), result)

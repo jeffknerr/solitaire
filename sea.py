@@ -16,8 +16,6 @@ import click
 
 # ------------------------------------------------- #
 # Still TODO:
-#  - input: pad with X if not in groups of 5
-#  - output in groups of 5 letters
 #  - add more tests
 
 @click.command()
@@ -34,9 +32,9 @@ import click
 def main(msgfile,encrypt,outfile,keyfile):
   """get message, get deck of cards, then encrypt/decrypt the message"""
   if msgfile=='':
-    msg = clean(input("msg: "))
+    msg = pad(clean(input("msg: ")))
   else:
-    msg = clean(readFile(msgfile))
+    msg = pad(clean(readFile(msgfile)))
   deckofcards = readCards(keyfile)
   nletters = len(msg)
   keystream = generateKeystream(deckofcards,nletters)
@@ -75,11 +73,23 @@ def output(numlist, outfile):
     letters.append(chr(n-1+ord("A")))
   outstr = "".join(letters)
   if outfile=='':
-    print(outstr)
+    print(fives(outstr))
   else:
     ofile = open(outfile, "w")
-    ofile.write(outstr + "\n")
+    ofile.write(fives(outstr) + "\n")
     ofile.close()
+
+def fives(S):
+  """
+  given string S, return letters in groups a 5 (ie, with space after
+  every 5th letter: ABCDE FGHIJ KLMNO ETC..
+  """
+  newS = ""
+  for i in range(len(S)):
+    if i%5==0 and i>0:
+      newS += " "
+    newS += S[i]
+  return newS
 
 def readFile(fn):
   """read and return message from given filename"""
@@ -102,6 +112,14 @@ def clean(orig):
       if ch.isalpha():
         cleaned += ch.upper()
   return cleaned
+
+def pad(orig):
+  """given a string, pad it with X's so multiple of 5"""
+  if len(orig)%5 == 0:
+    return orig
+  else:
+    xs = (5 - (len(orig)%5)) * "X"
+    return orig+xs
 
 def readCards(fn):
   """read deck of cards order from given filename, return deck"""
