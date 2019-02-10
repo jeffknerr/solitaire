@@ -200,8 +200,14 @@ class TestCards(unittest.TestCase):
 
   def test_solitaire(self):
     """test the whole thing..."""
+    # AAAAA AAAAA with inorder deck
     command = "./sea.py -k datafiles/inorder -m datafiles/aaaaa"
     result = "EXKYI ZSGEH"
+    output = subprocess.run(command.split(), stdout=subprocess.PIPE)
+    self.assertEqual(output.stdout.decode('utf-8').strip(), result)
+    # WE LOVE COMPUTER SCIENCE with inorder deck
+    command = "./sea.py -k datafiles/inorder -m datafiles/cs"
+    result = "ABVMD DUUQW OGXZI XDWLM EWUWF"
     output = subprocess.run(command.split(), stdout=subprocess.PIPE)
     self.assertEqual(output.stdout.decode('utf-8').strip(), result)
 
